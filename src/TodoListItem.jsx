@@ -1,10 +1,10 @@
 
 
-function TodoListItem (props) {
+function TodoListItem ({ todo }) {
 
     return (
         <div>
-            <li>{props.todo.title}</li>
+            <li>{todo.title}</li>
         </div>
     )
 }
