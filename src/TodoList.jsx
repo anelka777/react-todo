@@ -1,12 +1,12 @@
 import TodoListItem from './TodoListItem'
 
-const todoList = [
-    { id: 1, title: 'complete assignment' },
-    { id: 2, title: 'make a dinner' },
-    { id: 3, title: 'go shopping'},
-];
+// const todoList = [
+//     { id: 1, title: 'complete assignment' },
+//     { id: 2, title: 'make a dinner' },
+//     { id: 3, title: 'go shopping'},
+// ];
 
-function TodoList() {
+function TodoList( {todoList}) {  
     return (
         <div>
             <ul>
