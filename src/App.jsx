@@ -1,24 +1,37 @@
 
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
 import TodoList from './TodoList'
 import AddTodoForm from './AddTodoForm'
 
 
-function App() {
-const [todoList, setTodoList] = useState([]);
+function useSemiPersistentState(key, initialState) {
+  const [value, setValue] = useState(() => {
+    const savedValue = localStorage.getItem(key);
+    return savedValue ? JSON.parse(savedValue) : initialState;
+  });
 
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
 
-function addTodo(newTodo) {
-  setTodoList((prevTodoList) => [...prevTodoList, newTodo]);
+  return [value, setValue];
+
 }
-  return (
-    <div>
-      <h1>Todo List</h1>
-      <AddTodoForm onAddTodo={addTodo} />
-      <TodoList todoList={todoList}/>
-    </div>
-  )
+
+function App() {
+  const [todoList, setTodoList] = useSemiPersistentState('savedTodoList', []);
+
+  function addTodo(newTodo) {
+    setTodoList((prevTodoList) => [...prevTodoList, newTodo]);
+  }
+    return (
+      <React.Fragment>
+        <h1>Todo List</h1>
+        <AddTodoForm onAddTodo={addTodo} />
+        <TodoList todoList={todoList}/>
+      </React.Fragment>
+    )
 }
 
 export default App
