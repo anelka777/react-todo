@@ -16,8 +16,8 @@ function useSemiPersistentState(key, initialState) {
   }, [key, value]);
 
   return [value, setValue];
-
 }
+
 
 function App() {
   const [todoList, setTodoList] = useSemiPersistentState('savedTodoList', []);
@@ -25,11 +25,17 @@ function App() {
   function addTodo(newTodo) {
     setTodoList((prevTodoList) => [...prevTodoList, newTodo]);
   }
+
+  function removeTodo(id) {
+    const newTodoList = todoList.filter(todo => todo.id !== id);
+    setTodoList(newTodoList);
+  }
+
     return (
       <React.Fragment>
         <h1>Todo List</h1>
         <AddTodoForm onAddTodo={addTodo} />
-        <TodoList todoList={todoList}/>
+        <TodoList todoList={todoList} onRemoveTodo={removeTodo}/>
       </React.Fragment>
     )
 }
