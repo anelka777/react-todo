@@ -5,11 +5,11 @@ function InputWithLabel({ children, value, onChange}) {
     const inputRef = useRef(null);
     useEffect(() => {
         inputRef.current.focus();
-    }, []);
+    });
 
     return (
         <>
-            <label htmlFor="todoTitle">{children}Title </label>
+            <label htmlFor="todoTitle"> {children} </label>
                 <input
                     id="todoTitle"
                     type="text"
