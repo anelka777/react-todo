@@ -1,26 +1,37 @@
-
-import React, { useState, useEffect } from 'react'
-import './App.css'
-import TodoList from './TodoList'
-import AddTodoForm from './AddTodoForm'
-
-
-function useSemiPersistentState(key, initialState) {
-  const [value, setValue] = useState(() => {
-    const savedValue = localStorage.getItem(key);
-    return savedValue ? JSON.parse(savedValue) : initialState;
-  });
-
-  useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(value));
-  }, [key, value]);
-
-  return [value, setValue];
-}
-
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import TodoList from './TodoList';
+import AddTodoForm from './AddTodoForm';
 
 function App() {
-  const [todoList, setTodoList] = useSemiPersistentState('savedTodoList', []);
+  const [todoList, setTodoList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  
+  useEffect(() => {
+    const fetchData = new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          data: {
+            todoList: JSON.parse(localStorage.getItem('savedTodoList')) || [],
+          },
+        });
+      }, 2000);
+    });
+
+    fetchData.then((result) => {
+      setTodoList(result.data.todoList);
+      setIsLoading(false);
+    });
+  }, []);
+
+
+  useEffect(() => {
+    if (!isLoading) {
+      localStorage.setItem('savedTodoList', JSON.stringify(todoList));
+    }
+  }, [todoList]);
+
 
   function addTodo(newTodo) {
     setTodoList((prevTodoList) => [...prevTodoList, newTodo]);
@@ -31,13 +42,13 @@ function App() {
     setTodoList(newTodoList);
   }
 
-    return (
-      <React.Fragment>
-        <h1>Todo List</h1>
-        <AddTodoForm onAddTodo={addTodo} />
-        <TodoList todoList={todoList} onRemoveTodo={removeTodo}/>
-      </React.Fragment>
-    )
+  return (
+    <React.Fragment>
+      <h1>Todo List</h1>
+      {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} />}
+      <AddTodoForm onAddTodo={addTodo} />
+    </React.Fragment>
+  );
 }
 
-export default App
+export default App;
