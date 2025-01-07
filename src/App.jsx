@@ -7,40 +7,92 @@ function App() {
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  
-  useEffect(() => {
-    const fetchData = new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          data: {
-            todoList: JSON.parse(localStorage.getItem('savedTodoList')) || [],
-          },
-        });
-      }, 2000);
-    });
 
-    fetchData.then((result) => {
-      setTodoList(result.data.todoList);
+
+  const fetchData = async () => {
+    const options = {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
+      },
+    };
+
+    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
+
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      const todos = data.records.map(record => ({
+        title: record.fields.title,
+        id: record.id,
+      }));
+
+      console.log(todos);
+
+      setTodoList(todos);
       setIsLoading(false);
-    });
+
+    } catch (error) {
+      console.error('Fetch error:', error.message);
+    }
+  };
+
+const postTodo = async (newTodo) => {
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
+    },
+    body: JSON.stringify({
+      fields: {
+        title: newTodo.title,
+      },
+    }),
+  };
+
+  const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
+
+  try {
+    const response = await fetch(url, options);
+    if(!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Added tp Airtable:', data);
+
+    const createdTodo = {
+      title: data.fields.title,
+      id: data.id,
+    };
+    setTodoList((prevTodoList) => [...prevTodoList, createdTodo]);
+  } catch (error) {
+    console.error('POST error', error.message);
+  }
+};
+
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
 
-  useEffect(() => {
-    if (!isLoading) {
-      localStorage.setItem('savedTodoList', JSON.stringify(todoList));
-    }
-  }, [todoList]);
-
-
   function addTodo(newTodo) {
-    setTodoList((prevTodoList) => [...prevTodoList, newTodo]);
+    postTodo(newTodo);
   }
 
   function removeTodo(id) {
     const newTodoList = todoList.filter(todo => todo.id !== id);
     setTodoList(newTodoList);
   }
+
 
   return (
     <React.Fragment>
