@@ -7,7 +7,7 @@ function App() {
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-
+  const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 
   const fetchData = async () => {
     const options = {
@@ -17,7 +17,6 @@ function App() {
       },
     };
 
-    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 
     try {
       const response = await fetch(url, options);
@@ -34,12 +33,12 @@ function App() {
       }));
 
       console.log(todos);
-
       setTodoList(todos);
-      setIsLoading(false);
-
+      
     } catch (error) {
       console.error('Fetch error:', error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -57,8 +56,6 @@ const postTodo = async (newTodo) => {
     }),
   };
 
-  const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
-
   try {
     const response = await fetch(url, options);
     if(!response.ok) {
@@ -66,33 +63,40 @@ const postTodo = async (newTodo) => {
     }
 
     const data = await response.json();
-    console.log('Added tp Airtable:', data);
+    console.log('Added to Airtable:', data);
 
-    const createdTodo = {
-      title: data.fields.title,
-      id: data.id,
-    };
-    setTodoList((prevTodoList) => [...prevTodoList, createdTodo]);
+    return data;
   } catch (error) {
     console.error('POST error', error.message);
+    throw error;
   }
 };
 
+function addTodo(newTodo) {
+  postTodo(newTodo)
+    .then((data) => {
+      const createdTodo = {
+        title: data.fields.title,
+        id: data.id,
+      };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+    setTodoList((prevTodoList) => [...prevTodoList, createdTodo]);
+  })
+  .catch((error) => {
+    console.error('Error adding todo:', error.message);
+  });
+}
 
-
-  function addTodo(newTodo) {
-    postTodo(newTodo);
-  }
 
   function removeTodo(id) {
     const newTodoList = todoList.filter(todo => todo.id !== id);
     setTodoList(newTodoList);
   }
 
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <React.Fragment>
