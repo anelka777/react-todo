@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import TodoList from './TodoList';
 import AddTodoForm from './AddTodoForm';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+
 
 function App() {
   const [todoList, setTodoList] = useState([]);
@@ -16,7 +18,6 @@ function App() {
         Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
       },
     };
-
 
     try {
       const response = await fetch(url, options);
@@ -56,6 +57,7 @@ const postTodo = async (newTodo) => {
     }),
   };
 
+
   try {
     const response = await fetch(url, options);
     if(!response.ok) {
@@ -87,24 +89,66 @@ function addTodo(newTodo) {
   });
 }
 
+const deleteTodo = async (id) => {
+  const options = {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
+    },
+};
 
+  try {
+    const response = await fetch(`${url}/${id}`, options);
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+    console.log(`Deletes todo with id: ${id}`);
+    setTodoList((prevTodoList) => prevTodoList.filter((todo) => todo.id !==id));
+  } catch (error) {
+    console.log('DELETE error:', error.message);
+  }
+};
+
+function removeTodo(id) {
+  deleteTodo(id);
+}
+
+useEffect(() => {
+  fetchData();
+}, []);
+
+/*
   function removeTodo(id) {
     const newTodoList = todoList.filter(todo => todo.id !== id);
     setTodoList(newTodoList);
   }
+*/
 
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   return (
-    <React.Fragment>
-      <h1>Todo List</h1>
-      {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} />}
-      <AddTodoForm onAddTodo={addTodo} />
-    </React.Fragment>
+    <BrowserRouter>
+      <nav>
+        <Link to="/">Home</Link> | <Link to="/todo">Todo List</Link>
+      </nav>
+      <Routes>
+        <Route path="/" element={
+          <React.Fragment>
+              <h1>Welcome to the Todo App</h1>
+          </React.Fragment>
+          }
+        />
+        <Route path="/todo" element={
+          <React.Fragment>
+            <h1>Todo List</h1>
+            {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} />}
+            <AddTodoForm onAddTodo={addTodo} />
+          </React.Fragment>
+            }
+          />
+      </Routes>
+    </BrowserRouter>
   );
 }
+
 
 export default App;
