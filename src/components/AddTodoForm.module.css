@@ -1,0 +1,22 @@
+.form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    gap: 20px;
+}
+
+.inputBtn {
+    border-radius: 6px;
+    border: 1px solid #ff9800;
+    padding: 0.7em 1.2em;
+    cursor: pointer;
+    transition: border-color 0.25s;
+    background-color: inherit;
+    color: var(--text-color);
+    
+}
+
+.inputBtn:hover {
+    background-color: #ff9800;
+}

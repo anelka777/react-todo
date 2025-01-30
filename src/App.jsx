@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
-import TodoList from './TodoList';
-import AddTodoForm from './AddTodoForm';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { FaMoon, FaSun } from 'react-icons/fa';
+import './App.modules.css';
+import TodoList from './components/TodoList';
+import AddTodoForm from './components/AddTodoForm';
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 
 
 function App() {
+  const [darkMode, setDarkMode] = useState(true);
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle('dark-theme', darkMode);
+    document.body.classList.toggle('light-theme', !darkMode);
+  };
 
   const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 
@@ -117,32 +126,29 @@ useEffect(() => {
   fetchData();
 }, []);
 
-/*
-  function removeTodo(id) {
-    const newTodoList = todoList.filter(todo => todo.id !== id);
-    setTodoList(newTodoList);
-  }
-*/
-
 
   return (
     <BrowserRouter>
       <nav>
-        <Link to="/">Home</Link> | <Link to="/todo">Todo List</Link>
+        <NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>Home</NavLink>
+        <NavLink to="/todo" className={({ isActive }) => isActive ? "active" : ""}>Todo List</NavLink>
+        <button className="theme-toggle" onClick={toggleTheme}>
+            {darkMode ? <FaMoon /> : <FaSun />}
+        </button>
       </nav>
       <Routes>
         <Route path="/" element={
-          <React.Fragment>
-              <h1>Welcome to the Todo App</h1>
-          </React.Fragment>
+          <>
+            <h1>Welcome to the Todo App</h1>
+          </>
           }
         />
         <Route path="/todo" element={
-          <React.Fragment>
+          <>
             <h1>Todo List</h1>
-            {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} />}
+            {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} darkMode={darkMode}/>}
             <AddTodoForm onAddTodo={addTodo} />
-          </React.Fragment>
+          </>
             }
           />
       </Routes>

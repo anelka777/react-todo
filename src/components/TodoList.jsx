@@ -2,7 +2,7 @@ import TodoListItem from './TodoListItem'
 
 
 
-function TodoList( {todoList, onRemoveTodo}) {  
+function TodoList( {todoList, onRemoveTodo, darkMode}) {  
     return (
         <div>
             <ul>
@@ -11,6 +11,7 @@ function TodoList( {todoList, onRemoveTodo}) {
                         key={todo.id} 
                         todo={todo}
                         onRemoveTodo={onRemoveTodo}
+                        darkMode={darkMode}
                         />
                 ))}
             </ul>
