@@ -14,7 +14,7 @@
     padding: 0.6em 1.2em;
     cursor: pointer;
     transition: border-color 0.25s;
-    background-color: inherit;
+    background-color: inherit; 
 }
 
 .deleteBtnLight:hover,
@@ -27,4 +27,5 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    padding: 0.5em;
 }

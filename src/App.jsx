@@ -4,19 +4,25 @@ import './App.modules.css';
 import TodoList from './components/TodoList';
 import AddTodoForm from './components/AddTodoForm';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
-
+import pic from './assets/pic1.jpg';
 
 function App() {
-  const [darkMode, setDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
 
+  useEffect(() => {
+    document.body.classList.toggle('dark-theme', isDarkMode);
+    document.body.classList.toggle('light-theme', !isDarkMode);
+  }, [isDarkMode]);
+
+  
   const toggleTheme = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle('dark-theme', darkMode);
-    document.body.classList.toggle('light-theme', !darkMode);
+    setIsDarkMode(prevMode => !prevMode);
   };
+
+
 
   const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 
@@ -133,24 +139,25 @@ useEffect(() => {
         <NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>Home</NavLink>
         <NavLink to="/todo" className={({ isActive }) => isActive ? "active" : ""}>Todo List</NavLink>
         <button className="theme-toggle" onClick={toggleTheme}>
-            {darkMode ? <FaMoon /> : <FaSun />}
+            {isDarkMode ? <FaSun /> : <FaMoon /> }
         </button>
       </nav>
       <Routes>
         <Route path="/" element={
           <>
             <h1>Welcome to the Todo App</h1>
+            <img src={pic} alt="thinking" className="pic" />
+            
           </>
           }
         />
         <Route path="/todo" element={
-          <>
+          <div className='todo-container'>
             <h1>Todo List</h1>
-            {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} darkMode={darkMode}/>}
+            {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} isDarkMode={isDarkMode}/>}
             <AddTodoForm onAddTodo={addTodo} />
-          </>
-            }
-          />
+          </div>
+        }/>
       </Routes>
     </BrowserRouter>
   );

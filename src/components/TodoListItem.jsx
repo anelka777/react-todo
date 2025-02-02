@@ -1,18 +1,18 @@
 import { FaTrash } from 'react-icons/fa';
 import styles from './TodoListItem.module.css';
 
-function TodoListItem ({ todo, onRemoveTodo, darkMode }) {
+function TodoListItem ({ todo, onRemoveTodo, isDarkMode }) {
 
     return (
         <div>
             <li className={styles.listItem}>
                 {todo.title}
                 <button 
-                    className={darkMode ? styles.deleteBtnLight :  styles.deleteBtnDark }
+                    className={isDarkMode ? styles.deleteBtnLight :  styles.deleteBtnDark }
                     type="button"
                     onClick={() => onRemoveTodo(todo.id)}
                 >
-                    <FaTrash style={{ color: darkMode ? "black": "#ff9800" }} />
+                    <FaTrash style={{ color: "var(--icon-color)" }} />
                 </button>
             </li>           
         </div>
