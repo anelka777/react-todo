@@ -1,11 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
-import TodoList from './TodoList';
-import AddTodoForm from './AddTodoForm';
+import { FaMoon, FaSun } from 'react-icons/fa';
+import './App.modules.css';
+import TodoList from './components/TodoList';
+import AddTodoForm from './components/AddTodoForm';
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
+import pic from './assets/pic1.jpg';
 
 function App() {
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+
+  useEffect(() => {
+    document.body.classList.toggle('dark-theme', isDarkMode);
+    document.body.classList.toggle('light-theme', !isDarkMode);
+  }, [isDarkMode]);
+
+  
+  const toggleTheme = () => {
+    setIsDarkMode(prevMode => !prevMode);
+  };
+
+
 
   const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 
@@ -16,7 +33,6 @@ function App() {
         Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
       },
     };
-
 
     try {
       const response = await fetch(url, options);
@@ -56,6 +72,7 @@ const postTodo = async (newTodo) => {
     }),
   };
 
+
   try {
     const response = await fetch(url, options);
     if(!response.ok) {
@@ -87,24 +104,64 @@ function addTodo(newTodo) {
   });
 }
 
+const deleteTodo = async (id) => {
+  const options = {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
+    },
+};
 
-  function removeTodo(id) {
-    const newTodoList = todoList.filter(todo => todo.id !== id);
-    setTodoList(newTodoList);
+  try {
+    const response = await fetch(`${url}/${id}`, options);
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+    console.log(`Deletes todo with id: ${id}`);
+    setTodoList((prevTodoList) => prevTodoList.filter((todo) => todo.id !==id));
+  } catch (error) {
+    console.log('DELETE error:', error.message);
   }
+};
 
+function removeTodo(id) {
+  deleteTodo(id);
+}
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+useEffect(() => {
+  fetchData();
+}, []);
+
 
   return (
-    <React.Fragment>
-      <h1>Todo List</h1>
-      {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} />}
-      <AddTodoForm onAddTodo={addTodo} />
-    </React.Fragment>
+    <BrowserRouter>
+      <nav>
+        <NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>Home</NavLink>
+        <NavLink to="/todo" className={({ isActive }) => isActive ? "active" : ""}>Todo List</NavLink>
+        <button className="theme-toggle" onClick={toggleTheme}>
+            {isDarkMode ? <FaSun /> : <FaMoon /> }
+        </button>
+      </nav>
+      <Routes>
+        <Route path="/" element={
+          <>
+            <h1>Welcome to the Todo App</h1>
+            <img src={pic} alt="thinking" className="pic" />
+            
+          </>
+          }
+        />
+        <Route path="/todo" element={
+          <div className='todo-container'>
+            <h1>Todo List</h1>
+            {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} isDarkMode={isDarkMode}/>}
+            <AddTodoForm onAddTodo={addTodo} />
+          </div>
+        }/>
+      </Routes>
+    </BrowserRouter>
   );
 }
+
 
 export default App;
