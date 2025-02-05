@@ -1,11 +1,12 @@
 import { useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 
 function InputWithLabel({ children, value, onChange}) {
     const inputRef = useRef(null);
     useEffect(() => {
         inputRef.current.focus();
-    });
+    }, []);
 
     return (
         <>
@@ -20,7 +21,13 @@ function InputWithLabel({ children, value, onChange}) {
                 />
         </>
     )
-}
+};
+
+InputWithLabel.propTypes = {
+    children: PropTypes.node.isRequired,
+    value: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired
+};
 
 
 
