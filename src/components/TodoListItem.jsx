@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { FaTrash } from 'react-icons/fa';
 import styles from './TodoListItem.module.css';
 
@@ -19,5 +20,13 @@ function TodoListItem ({ todo, onRemoveTodo, isDarkMode }) {
     )
 }
 
+TodoListItem.propTypes = {
+    todo: PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        title: PropTypes.string.isRequired,
+    }).isRequired,
+    onRemoveTodo: PropTypes.func.isRequired,
+    isDarkMode: PropTypes.bool
+};
 
 export default TodoListItem
