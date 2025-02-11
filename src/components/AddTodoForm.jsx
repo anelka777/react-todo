@@ -8,8 +8,6 @@ import PropTypes from  "prop-types";
 function AddTodoForm({ onAddTodo }) {
     const [todoTitle, setTodoTitle] = useState('');
 
-    
-
     function handleTitleChange(event) {
         const newTodoTitle = event.target.value;
         setTodoTitle(newTodoTitle);
@@ -20,11 +18,11 @@ function AddTodoForm({ onAddTodo }) {
         const newTodo = {
             title: todoTitle,
             id: Date.now(),
+            createdTime: new Date().toISOString(),            
         };
         onAddTodo(newTodo);
         setTodoTitle('');
     }
-
 
     return (
         <div>

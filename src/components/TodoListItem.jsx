@@ -2,12 +2,17 @@ import PropTypes from 'prop-types';
 import { FaTrash } from 'react-icons/fa';
 import styles from './TodoListItem.module.css';
 
-function TodoListItem ({ todo, onRemoveTodo, isDarkMode }) {
+function TodoListItem ({ todo, onRemoveTodo, onToggleComplete, isDarkMode }) {
 
     return (
         <div>
-            <li className={styles.listItem}>
-                {todo.title}
+            <li className={`${styles.listItem} ${todo.completed ? styles.completed : ''}`}>
+                <input className={styles.checkbox}
+                    type="checkbox" 
+                    checked={todo.completed} 
+                    onChange={() => onToggleComplete(todo.id)}
+                />
+                <span>{todo.title}</span>
                 <button 
                     className={isDarkMode ? styles.deleteBtnLight :  styles.deleteBtnDark }
                     type="button"
@@ -24,8 +29,10 @@ TodoListItem.propTypes = {
     todo: PropTypes.shape({
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         title: PropTypes.string.isRequired,
+        completed: PropTypes.bool.isRequired,
     }).isRequired,
     onRemoveTodo: PropTypes.func.isRequired,
+    onToggleComplete: PropTypes.func.isRequired,
     isDarkMode: PropTypes.bool
 };
 
