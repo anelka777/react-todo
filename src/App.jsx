@@ -30,11 +30,11 @@ function App() {
     setIsNewestFirst(prev => {
       const newSortOrder = !prev;
       setTodoList(prevList => 
-        [...prevList].slice().sort((a, b) => {
+        [...prevList].sort((a, b) => {
           if (!a.createdTime || !b.createdTime) return 0;
           return newSortOrder 
-            ? new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime()
-            : new Date(b.createdTime).getTime() - new Date(a.createdTime).getTime();
+            ? new Date(b.createdTime) - new Date(a.createdTime)
+            : new Date(a.createdTime) - new Date(b.createdTime);
         })
       );
       return newSortOrder;
@@ -83,7 +83,7 @@ function App() {
         createdTime: record.createdTime,
       }));
 
-      todos.sort((a, b) => a.title.localeCompare(b.title));
+      todos.sort((a, b) => new Date(a.createdTime) - new Date(b.createdTime));
 
       console.log(todos);
       setTodoList(todos);
@@ -189,8 +189,7 @@ function App() {
               <div className ="app-container">
                 <h1>Welcome to the Todo App</h1>
                 <img src={pic} alt="thinking" className="pic" />
-              </div>
-              
+              </div>              
             </div>          
           </>
           }
@@ -200,10 +199,10 @@ function App() {
             <h1>Todo List</h1>
             <div className="sort-buttons">
               <button className="theme-toggle" onClick={toggleAlphabeticalSort}>
-                {isAscending ? "Sort: Z-A" : "Sort: A-Z"}
+                {isAscending ? "Sort: A-Z" : "Sort: Z-A"}
               </button>
               <button className="theme-toggle" onClick={toggleDateSort}>
-                {isNewestFirst ? 'Sort: Oldest' : 'Sort: Newest'}
+                {isNewestFirst ? 'Sort: Newest' : 'Sort: Oldest'}
               </button>
             </div>
             {isLoading ? <p>Loading...</p> : 
