@@ -15,29 +15,28 @@ function App() {
 
 
   const toggleAlphabeticalSort = () => {
-    setIsAscending(prev => {
-      const newSortOrder = !prev;
-      setTodoList(prevList => 
-        [...prevList].sort((a, b) => 
-          a.title && b.title ? (newSortOrder ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)) : 0
-        )
-      );
-      return newSortOrder;
+    setIsAscending(prev => !prev);
+    
+    setTodoList(prevList => {
+      const sortedList = [...prevList].sort((a, b) => {
+        if (!a.title || !b.title) return 0;
+        return isAscending ? b.title.localeCompare(a.title) : a.title.localeCompare(b.title);
+      });
+      return sortedList;
     });
   };
   
   const toggleDateSort = () => {
-    setIsNewestFirst(prev => {
-      const newSortOrder = !prev;
-      setTodoList(prevList => 
-        [...prevList].sort((a, b) => {
-          if (!a.createdTime || !b.createdTime) return 0;
-          return newSortOrder 
-            ? new Date(b.createdTime) - new Date(a.createdTime)
-            : new Date(a.createdTime) - new Date(b.createdTime);
-        })
-      );
-      return newSortOrder;
+    setIsNewestFirst(prev => !prev);
+  
+    setTodoList(prevList => {
+      const sortedList = [...prevList].sort((a, b) => {
+        if (!a.createdTime || !b.createdTime) return 0;
+        return isNewestFirst
+          ? new Date(a.createdTime) - new Date(b.createdTime)
+          : new Date(b.createdTime) - new Date(a.createdTime);
+      });
+      return sortedList;
     });
   };
 
@@ -81,6 +80,7 @@ function App() {
         title: record.fields.title,
         id: record.id,
         createdTime: record.createdTime,
+        completed: record.fields.completed || false,
       }));
 
       todos.sort((a, b) => new Date(a.createdTime) - new Date(b.createdTime));
@@ -106,6 +106,7 @@ function App() {
         fields: {
           title: newTodo.title,
           createdTime: newTodo.createdTime,
+          completed: newTodo.completed || false,
         },
       }),
     };

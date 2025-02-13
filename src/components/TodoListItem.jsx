@@ -9,7 +9,7 @@ function TodoListItem ({ todo, onRemoveTodo, onToggleComplete, isDarkMode }) {
             <li className={`${styles.listItem} ${todo.completed ? styles.completed : ''}`}>
                 <input className={styles.checkbox}
                     type="checkbox" 
-                    checked={todo.completed} 
+                    checked={todo.completed || false} 
                     onChange={() => onToggleComplete(todo.id)}
                 />
                 <span>{todo.title}</span>
@@ -29,7 +29,7 @@ TodoListItem.propTypes = {
     todo: PropTypes.shape({
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         title: PropTypes.string.isRequired,
-        completed: PropTypes.bool.isRequired,
+        completed: PropTypes.bool,
     }).isRequired,
     onRemoveTodo: PropTypes.func.isRequired,
     onToggleComplete: PropTypes.func.isRequired,
