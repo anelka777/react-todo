@@ -40,13 +40,41 @@ function App() {
     });
   };
 
-  const toggleComplete = (id) => {
-    setTodoList((prevList) =>
-      prevList.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-  };
+
+
+const toggleComplete = async (id) => {
+  
+  const updatedTodo = todoList.find(todo => todo.id === id);
+  if (!updatedTodo) return;
+
+  const updatedStatus = !updatedTodo.done;
+
+  setTodoList(prevList =>
+    prevList.map(todo =>
+      todo.id === id ? { ...todo, done: updatedStatus } : todo
+    )
+  );
+
+  try {
+    const response = await fetch(`${url}/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fields: { done: updatedStatus }
+      })
+    });
+    if (!response.ok) {
+      throw new Error(`Error updating task in Airtable: ${response.statusText}`);
+    }
+    console.log(`Task status updated: ${id} -> ${updatedStatus}`);
+  } catch (error) {
+    console.error('Task update error in Airtable:', error.message);
+  }
+};
+
 
   useEffect(() => {
     document.body.classList.toggle('dark-theme', isDarkMode);
@@ -80,7 +108,7 @@ function App() {
         title: record.fields.title,
         id: record.id,
         createdTime: record.createdTime,
-        completed: record.fields.completed || false,
+        done: record.fields.done || false,
       }));
 
       todos.sort((a, b) => new Date(a.createdTime) - new Date(b.createdTime));
@@ -106,7 +134,7 @@ function App() {
         fields: {
           title: newTodo.title,
           createdTime: newTodo.createdTime,
-          completed: newTodo.completed || false,
+          done: newTodo.done || false,
         },
       }),
     };
