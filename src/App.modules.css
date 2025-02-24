@@ -9,6 +9,10 @@
   align-items: center;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 
 .light-theme {
   --bg-color: #ffffff;
@@ -54,8 +58,8 @@ button.theme-toggle:hover {
 
 .sort-buttons {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 0.625em; /* 10px */
+  margin-bottom: 0.9375em; /* 15px */
 }
 
 
@@ -120,5 +124,5 @@ input[type="text"]:focus {
   max-width: 600px;
   border-radius: 10px;
   border: 1px solid #00ff00;
-  padding: 1.25em;
+  padding: 1.25em; /* 20px */
 }
