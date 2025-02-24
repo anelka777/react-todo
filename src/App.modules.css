@@ -9,6 +9,10 @@
   align-items: center;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 
 .light-theme {
   --bg-color: #ffffff;
@@ -52,6 +56,13 @@ button.theme-toggle:hover {
   color: #ff9800;
 }
 
+.sort-buttons {
+  display: flex;
+  gap: 0.625em; /* 10px */
+  margin-bottom: 0.9375em; /* 15px */
+}
+
+
 nav {
   display: flex;
   justify-content: space-between;
@@ -86,7 +97,7 @@ input[type="text"]:focus {
 
 
 .pic {
-  width: 40%;
+  width: 70%;
   border-radius: 10px;
 }
 
@@ -95,6 +106,22 @@ input[type="text"]:focus {
   flex-direction: column;
   align-items: center;
   min-width: 35%;
+  border-radius: 10px;
+  border: 1px solid #00ff00;
+  padding: 1.25em; /* 20px */
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 600px;
   border-radius: 10px;
   border: 1px solid #00ff00;
   padding: 1.25em; /* 20px */
